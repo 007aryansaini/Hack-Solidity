@@ -1,0 +1,83 @@
+// We can forcefully send ether to another contract.
+// We can protect our contract from this attack be not relying on the address(this).balance instead we keep a track of ether by our own.
+ 
+ // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
+
+contract Game{
+      
+      address payable public winner;
+      uint public target =  7 ether;
+
+
+      function play() public payable {
+           require( msg.value == 1 ether , "Amount is not 1 ether");
+
+          
+           require( getBalance() <= target , "Game is over...");
+
+           if( getBalance() == target ){
+                winner = payable(msg.sender);
+           }
+      }
+
+      function getReward() external {
+          require(msg.sender == winner , "Not winner");
+          winner.transfer(getBalance());
+      }
+
+      function getBalance() public view returns(uint){
+          return address(this).balance;
+      }
+}
+
+
+contract attacker{
+     function attack(address payable _target) public payable {
+   selfdestruct(_target);
+     }
+}
+
+
+// Protected Smart Contract
+
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
+
+contract Game{
+      
+      address payable public winner;
+      uint public target =  7 ether;
+      uint public  balance;
+
+
+      function play() public payable {
+           require( msg.value == 1 ether , "Amount is not 1 ether");
+
+            balance += msg.value;
+           require( balance <= target , "Game is over...");
+
+           if( balance == target ){
+                winner = payable(msg.sender);
+           }
+      }
+
+      function getReward() external {
+          require(msg.sender == winner , "Not winner");
+          winner.transfer(getBalance());
+      }
+
+      function getBalance() public view returns(uint){
+          return address(this).balance;
+      }
+}
+
+
+contract attacker{
+     function attack(address payable _target) public payable {
+   selfdestruct(_target);
+     }
+}
+
+
