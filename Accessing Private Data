@@ -1,0 +1,4 @@
+--> When we declare the state variable as private that means that the other contract cannot access the state variable but they can be accessed and one 
+    can know the private state variables also so it is recommended to not store private data in the blockchain.
+
+    . EVM stores the data in 2**256 slots and each slot can hold the data upto 32 bytes.
