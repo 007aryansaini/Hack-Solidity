@@ -1,1 +1,38 @@
 
+
+/*
+
+
+We can get rid from this attack in the contract by using withdrawl pattern.
+
+
+*/
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
+
+
+contract KingOfEther{
+      address payable public king;
+      uint public balance;
+      mapping(address => uint )  Allkings;
+
+      function claimThrone() external payable {
+             require( msg.value > balance , "Need to pay more to become a king.");
+             
+             Allkings[msg.sender] += msg.value;
+             king.transfer(Allkings[king]);
+
+             balance = msg.value;
+             Allkings[king] = 0;
+             king = payable(msg.sender);
+      }
+
+}
+
+contract attack{
+         
+            function attackAndconquer(KingOfEther king) external payable {
+                king.claimThrone{ value: msg.value}();
+            }
+}
+
